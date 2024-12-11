@@ -1,0 +1,120 @@
+// Initialize theme using localStorage
+const body = document.body;
+const themeToggle = document.getElementById('theme-toggle');
+const savedTheme = localStorage.getItem('theme') || 'light-mode';
+
+body.classList.add(savedTheme);
+themeToggle.textContent = savedTheme === 'light-mode' ? 'Switch to Dark Mode' : 'Switch to Light Mode';
+
+// Toggle theme
+themeToggle.addEventListener('click', () => {
+    const currentTheme = body.classList.contains('light-mode') ? 'light-mode' : 'dark-mode';
+    const newTheme = currentTheme === 'light-mode' ? 'dark-mode' : 'light-mode';
+    body.classList.replace(currentTheme, newTheme);
+    themeToggle.textContent = newTheme === 'light-mode' ? 'Switch to Dark Mode' : 'Switch to Light Mode';
+    localStorage.setItem('theme', newTheme);
+});
+
+// Initialize Chart.js for stock price simulation
+const stockCtx = document.getElementById('stockChart').getContext('2d');
+const stockChart = new Chart(stockCtx, {
+    type: 'line',
+    data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        datasets: [{
+            label: 'Stock Price ($)',
+            data: [120, 130, 125, 140, 150, 160],
+            borderColor: '#FFD700',
+            backgroundColor: 'rgba(255, 215, 0, 0.3)',
+            fill: true
+        }]
+    }
+});
+
+// Chart for technical indicators
+const indicatorCtx = document.getElementById('indicatorChart').getContext('2d');
+const indicatorChart = new Chart(indicatorCtx, {
+    type: 'bar',
+    data: {
+        labels: ['RSI', 'MACD', 'Moving Avg'],
+        datasets: [{
+            label: 'Indicator Values',
+            data: [70, 5, 50],
+            backgroundColor: ['#FFD700', '#FFA500', '#FF8C00']
+        }]
+    }
+});
+
+// Watchlist
+const watchlist = JSON.parse(localStorage.getItem('watchlist')) || [];
+const watchlistItems = document.getElementById('watchlist-items');
+const stockInput = document.getElementById('stock-input');
+const addStockBtn = document.getElementById('add-stock');
+
+function renderWatchlist() {
+    watchlistItems.innerHTML = '';
+    watchlist.forEach(stock => {
+        const li = document.createElement('li');
+        li.textContent = stock;
+        li.addEventListener('click', () => removeWatchlistItem(stock));
+        watchlistItems.appendChild(li);
+    });
+}
+
+addStockBtn.addEventListener('click', () => {
+    const stock = stockInput.value.trim().toUpperCase();
+    if (stock && !watchlist.includes(stock)) {
+        watchlist.push(stock);
+        localStorage.setItem('watchlist', JSON.stringify(watchlist));
+        renderWatchlist();
+    }
+    stockInput.value = '';
+});
+
+function removeWatchlistItem(stock) {
+    const index = watchlist.indexOf(stock);
+    if (index > -1) {
+        watchlist.splice(index, 1);
+        localStorage.setItem('watchlist', JSON.stringify(watchlist));
+        renderWatchlist();
+    }
+}
+
+renderWatchlist();
+
+// Wishlist
+const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+const wishlistItems = document.getElementById('wishlist-items');
+const wishlistInput = document.getElementById('wishlist-input');
+const addWishlistBtn = document.getElementById('add-wishlist');
+
+function renderWishlist() {
+    wishlistItems.innerHTML = '';
+    wishlist.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        li.addEventListener('click', () => removeWishlistItem(item));
+        wishlistItems.appendChild(li);
+    });
+}
+
+addWishlistBtn.addEventListener('click', () => {
+    const item = wishlistInput.value.trim();
+    if (item && !wishlist.includes(item)) {
+        wishlist.push(item);
+        localStorage.setItem('wishlist', JSON.stringify(wishlist));
+        renderWishlist();
+    }
+    wishlistInput.value = '';
+});
+
+function removeWishlistItem(item) {
+    const index = wishlist.indexOf(item);
+    if (index > -1) {
+        wishlist.splice(index, 1);
+        localStorage.setItem('wishlist', JSON.stringify(wishlist));
+        renderWishlist();
+    }
+}
+
+renderWishlist();
